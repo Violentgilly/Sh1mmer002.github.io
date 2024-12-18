@@ -11,19 +11,28 @@ const scenes = {
   startScene: document.getElementById('startScene')
 };
 
+
+
 function showScene(sceneId) {
   for (const scene in scenes) {
-      scenes[scene].classList.remove('active');
+      if (scenes[scene]) {
+          scenes[scene].classList.remove('active');
+      }
   }
-  scenes[sceneId].classList.add('active');
+  const sceneElement = scenes[sceneId];
+  if (sceneElement) {
+      sceneElement.classList.add('active');
+  } else {
+      console.error(`Scene with id '${sceneId}' not found.`);
+  }
 }
 
 function startGame() {
-    const nickname = document.getElementById('nickname').value;
-    const playerId = document.getElementById('playerId').value;
-    savePlayerInfo(playerId, nickname, []);
-    showScene('libraryScene');
-    loadGameData('libraryInfo', 'library.txt');
+  const nickname = document.getElementById('nickname').value || '游客';
+  const playerId = document.getElementById('playerId').value || '游客';
+  savePlayerInfo(playerId, nickname, []);
+  showScene('libraryScene');
+  loadGameData('libraryInfo', 'library.txt');
 }
 
 function chooseHistory() {
@@ -64,42 +73,43 @@ function restartGame() {
 
 // 保存玩家信息到本地存储
 function savePlayerInfo(playerId, nickname, gameHistory) {
+  if (playerId === null || nickname === null) {
+    playerId = '游客';
+    nickname = '游客';
+  }
   localStorage.setItem('playerId', playerId);
   localStorage.setItem('nickname', nickname);
   localStorage.setItem('gameHistory', JSON.stringify(gameHistory));
 }
 
-// 恢复玩家信息
 function restorePlayerInfo() {
   const playerId = localStorage.getItem('playerId');
   const nickname = localStorage.getItem('nickname');
   const gameHistory = JSON.parse(localStorage.getItem('gameHistory') || '[]');
-  return { playerId, nickname, gameHistory };
+  if (playerId === 'null') playerId = null;
+  if (nickname === 'null') nickname = null;
+  return { playerId: playerId || '游客', nickname: nickname || '游客', gameHistory };
 }
+
 
 // 当页面加载时，尝试恢复玩家信息和游戏历史
 document.addEventListener('DOMContentLoaded', () => {
   const playerInfo = restorePlayerInfo();
-  // 如果有玩家信息，更新到页面上（这里可以根据需要更新到页面的任何部分）
-  if (playerInfo.playerId) {
-    // 例如，更新到一个隐藏的div中，或者用于其他逻辑
-    console.log('恢复的玩家信息：', playerInfo);
-  }
+  console.log('恢复的玩家信息：', playerInfo);
 
-  // 检查游戏历史，如果玩家之前已经在游戏中，尝试恢复到之前的场景
   const gameHistory = playerInfo.gameHistory;
   if (gameHistory.length > 0) {
     const lastScene = gameHistory[gameHistory.length - 1];
     showScene(lastScene);
   } else {
-    // 如果没有游戏历史，从开始场景开始
     showScene('startScene');
   }
 });
 
+
 // 异步加载游戏元素资料
 async function loadGameData(elementId, fileName) {
-    try {
+  try {
       const response = await fetch(fileName);
       const data = await response.text();
       const element = document.getElementById(elementId);
@@ -127,4 +137,11 @@ document.addEventListener('DOMContentLoaded', function() {
 // 确保开始场景是默认显示的
 document.addEventListener('DOMContentLoaded', function() {
   showScene('startScene');
+});
+
+window.addEventListener('load', function() {
+  var audio = document.getElementById('backgroundMusic');
+  setTimeout(function() {
+      audio.play();
+  }, 3000); // 延迟3秒播放
 });
