@@ -64,33 +64,46 @@ function searchForSwitch() {
   showScene('treasureScene');
 }
 
+// 重新开始游戏
 function restartGame() {
-  for (const scene in scenes) {
-      scenes[scene].classList.remove('active');
-  }
+  // 清空游戏进度
+  localStorage.removeItem('gameProgress');
+  // 重置玩家信息
+  localStorage.removeItem('playerId');
+  localStorage.removeItem('nickname');
+  localStorage.removeItem('gameHistory');
+  // 重置到开始场景
   showScene('startScene');
+}
+
+// 再试一次游戏
+function retryGame() {
+  // 尝试从localStorage加载最后一个保存的游戏进度
+  const gameProgress = JSON.parse(localStorage.getItem('gameProgress'));
+  if (gameProgress) {
+      // 根据保存的游戏进度恢复游戏状态
+      showScene(gameProgress.sceneId);
+      // 恢复其他游戏状态...
+      restorePlayerInfo();
+  } else {
+      // 如果没有保存的游戏进度，重新开始游戏
+      restartGame();
+  }
 }
 
 // 保存玩家信息到本地存储
 function savePlayerInfo(playerId, nickname, gameHistory) {
-  if (playerId === null || nickname === null) {
-    playerId = '游客';
-    nickname = '游客';
-  }
   localStorage.setItem('playerId', playerId);
   localStorage.setItem('nickname', nickname);
   localStorage.setItem('gameHistory', JSON.stringify(gameHistory));
 }
 
 function restorePlayerInfo() {
-  const playerId = localStorage.getItem('playerId');
-  const nickname = localStorage.getItem('nickname');
+  const playerId = localStorage.getItem('playerId') || '游客';
+  const nickname = localStorage.getItem('nickname') || '游客';
   const gameHistory = JSON.parse(localStorage.getItem('gameHistory') || '[]');
-  if (playerId === 'null') playerId = null;
-  if (nickname === 'null') nickname = null;
-  return { playerId: playerId || '游客', nickname: nickname || '游客', gameHistory };
+  return { playerId, nickname, gameHistory };
 }
-
 
 // 当页面加载时，尝试恢复玩家信息和游戏历史
 document.addEventListener('DOMContentLoaded', () => {
@@ -104,8 +117,10 @@ document.addEventListener('DOMContentLoaded', () => {
   } else {
     showScene('startScene');
   }
-});
 
+  // 在页面加载时加载图书馆的资料
+  loadGameData('libraryInfo', 'library.txt');
+});
 
 // 异步加载游戏元素资料
 async function loadGameData(elementId, fileName) {
@@ -129,19 +144,10 @@ async function loadGameData(elementId, fileName) {
   }
 }
 
-// 在页面加载时加载图书馆的资料
-document.addEventListener('DOMContentLoaded', function() {
-  loadGameData('libraryInfo', 'library.txt');
-});
-
-// 确保开始场景是默认显示的
-document.addEventListener('DOMContentLoaded', function() {
-  showScene('startScene');
-});
-
+// 延迟3秒播放背景音乐
 window.addEventListener('load', function() {
   var audio = document.getElementById('backgroundMusic');
   setTimeout(function() {
       audio.play();
-  }, 3000); // 延迟3秒播放
+  }, 3000);
 });
