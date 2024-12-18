@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>寻宝游戏</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="startScene" class="scene">
+        <h1>欢迎来到寻宝游戏！</h1>
+        <p>请输入您的昵称和玩家ID：</p>
+        <input type="text" id="nickname" placeholder="昵称">
+        <input type="text" id="playerId" placeholder="玩家ID">
+        <button class="bounceButton" onclick="startGame()">开始游戏</button>
+    </div>
+    <div id="libraryScene" class="scene">
+        <h1>在古老的图书馆里找到了第一个线索...</h1>
+        <p id="libraryInfo">加载中...</p>
+        <button class="bounceButton" onclick="chooseHistory()">历史</button>
+        <button class="bounceButton" onclick="chooseMyth()">神话</button>
+    </div>
+    <div id="historyClueScene" class="scene">
+        <h1>你选择了历史书籍...</h1>
+        <p>书中提到了一个古老的国王，他的宝藏被隐藏在...</p>
+        <button class="bounceButton" onclick="navigateToDecodeScene()">继续冒险</button>
+    </div>
+    <div id="mythClueScene" class="scene">
+        <h1>你选择了神话书籍...</h1>
+        <p>书中描述了一个被神守护的神秘岛屿，宝藏可能在那里...</p>
+        <button class="bounceButton" onclick="navigateToDecodeScene()">继续冒险</button>
+    </div>
+    <div id="decodeScene" class="scene">
+        <h1>解码成功!宝藏在一座古老的神庙中...</h1>
+        <p>你面前有两条通往神庙的路，一条似乎更安全，而另一条则隐藏着未知的危险。你选择哪条路？</p>
+        <button class="bounceButton" onclick="chooseSafePath()">安全路径</button>
+        <button class="bounceButton" onclick="chooseDangerousPath()">危险路径</button>
+    </div>
+    <div id="templeScene" class="scene">
+        <h1>找到了一个神秘的箱子...</h1>
+        <p id="templeInfo">加载中...</p>
+        <button class="bounceButton" onclick="tryToPickLock()">尝试开锁</button>
+        <button class="bounceButton" onclick="searchForSwitch()">寻找开关</button>
+    </div>
+    <div id="treasureScene" class="scene">
+        <h1 class="fadeIn">恭喜!你找到了传说中的宝藏!</h1>
+        <div class="icon treasure"></div>
+        <button class="bounceButton" onclick="restartGame()">重新开始冒险</button>
+    </div>
+    <div id="failureScene" class="scene">
+        <h1 class="fadeIn">任务失败！</h1>
+        <p>你遇到了难以克服的困难。你需要找到新的方法来继续你的冒险。</p>
+        <button class="bounceButton" onclick="restartGame()">再试一次</button>
+    </div>
+    <audio autoplay loop id="backgroundMusic">
+        <source src="background.mp3" type="audio/mpeg">
+        <source src="background.ogg" type="audio/ogg">
+        您的浏览器不支持 audio 元素。
+    </audio>
+    <script src="main.js"></script>
+</body>
+</html>
