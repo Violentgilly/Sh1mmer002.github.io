@@ -149,5 +149,5 @@ window.addEventListener('load', function() {
   var audio = document.getElementById('backgroundMusic');
   setTimeout(function() {
       audio.play();
-  }, 3000);
+  }, 500);
 });
